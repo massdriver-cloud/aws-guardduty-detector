@@ -1,0 +1,256 @@
+schema: draft-07
+name: "aws-guardduty-detector"
+description: "Deploys an Amazon GuardDuty Detector to an AWS region as a threat detection service that continuously monitors your AWS accounts and workloads for malicious activity and sends emails about security findings for visibility and remediation."
+source_url: github.com/massdriver-cloud/aws-guardduty-detector
+access: private
+type: "infrastructure"
+
+
+params:
+  required:
+    - detector
+    - notifications
+    - features
+    - monitoring
+  properties:    
+    detector:
+      type: object
+      title: Detector
+      required:
+      - region
+      properties:
+        region:
+          $ref: https://raw.githubusercontent.com/massdriver-cloud/artifact-definitions/main/definitions/types/aws-region.json
+          $md.immutable: true
+    notifications:
+      type: object
+      title: Notifications
+      required:
+        - frequency
+        - email
+        - severity
+      properties:
+        frequency:
+          title: Frequency
+          description: Select the frequency to export events to EventHub for notifications
+          type: string
+          default: SIX_HOURS
+          oneOf:
+            - title: 15 Minutes
+              const: FIFTEEN_MINUTES
+            - title: 1 Hour
+              const: ONE_HOUR
+            - title: 6 Hours
+              const: SIX_HOURS
+        email:
+          title: Email
+          description: Specify email to be notified at in case of findings
+          type: string
+          format: email
+        severity:
+          title: Severity
+          type: object
+          description: Select the [severity levels](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_findings.html#guardduty_findings-severity) of GuardDuty findings to be notified about
+          required:
+          - low
+          - medium
+          - high
+          properties:
+            low:
+              title: Low
+              description: A low severity level indicates attempted suspicious activity that did not compromise your network
+              type: boolean
+              default: false
+            medium:
+              title: Medium
+              description: A Medium severity level indicates suspicious activity that deviates from normally observed behavior and, depending on your use case, may be indicative of a resource compromise.
+              type: boolean
+              default: true
+            high:
+              title: High
+              description: A High severity level indicates that the resource in question is compromised and is actively being used for unauthorized purposes.
+              type: boolean
+              default: true
+    features:
+      type: object
+      title: Additional Features
+      description: GuardDuty monitors [foundational features](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_data-sources.html) by default. Select any additional features you would like GuardDuty to monitor.
+      required:
+      - s3_data
+      - eks_audit
+      - ebs_malware
+      - rds_login
+      - eks_runtime
+      - lambda_network
+      properties:
+        s3_data:
+          title: S3 Events
+          description: Enable monitoring of [S3 get/put/list/delete events](https://docs.aws.amazon.com/guardduty/latest/ug/features-s3-protection.html)
+          type: boolean
+          default: false
+        eks_audit:
+          title: EKS Audit Log
+          description: Enable monitoring of [EKS audit logs](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty-eks-audit-log-monitoring.html) to detect suspicious activity in your EKS clusters
+          type: boolean
+          default: false
+        eks_runtime:
+          title: EKS Runtime
+          description: Enable monitoring of [EKS runtimes](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty-eks-runtime-monitoring.html) to detect suspicious activity in EKS workloads
+          type: boolean
+          default: false
+        lambda_network:
+          title: Lambda Invokations
+          description: Enable monitoring of [AWS lambda invocations](https://docs.aws.amazon.com/guardduty/latest/ug/feature-in-gdu-lambda-protection.html)
+          type: boolean
+          default: false
+        ebs_malware:
+          title: Malware
+          description: Enable scanning of [EBS volumes for malware](https://docs.aws.amazon.com/guardduty/latest/ug/features-malware-protection.html)
+          type: boolean
+          default: false
+        rds_login:
+          title: RDS Logins
+          description: Enable monitoring [successful and unsuccessful login attempts to RDS databases](https://docs.aws.amazon.com/guardduty/latest/ug/features-rds-protection.html)
+          type: boolean
+          default: false
+    monitoring:
+      type: object
+      title: Monitoring
+      properties:
+        mode:
+          title: Alarm Mode
+          description: Enable and customize CloudWatch metric alarms.
+          type: string
+          default: AUTOMATED
+          oneOf:
+            - const: AUTOMATED
+              title: Automated
+            - const: CUSTOM
+              title: Custom
+            - const: DISABLED
+              title: Disabled
+      dependencies:
+        mode:
+          oneOf:
+            - properties:
+                mode:
+                  const: AUTOMATED
+            - properties:
+                mode:
+                  const: DISABLED
+            - properties:
+                mode:
+                  const: CUSTOM
+                alarms:
+                  type: object
+                  title: Alarms
+                  required:
+                    - failed_notifications
+                    - guardduty_findings
+                  properties:
+                    failed_notifications:
+                      title: Failed Notifications
+                      description: The number of messages that Amazon SNS failed to deliver.
+                      type: object
+                      required:
+                        - threshold
+                        - period
+                        - statistic
+                      properties:
+                        threshold:
+                          type: integer
+                          title: Threshold
+                          description: "The current capacity of an Aurora Serverless DB cluster. (Unit: Count)"
+                          minimum: 1
+                          default: 1
+                        period:
+                          type: integer
+                          title: Period
+                          minimum: 1
+                          maximum: 86400
+                          default: 300
+                          description: The length of time associated with this statistic.
+                        statistic:
+                          type: string
+                          title: Statistic
+                          description: The calculation for triggering the alarm threshold.
+                          default: Sum
+                          enum:
+                            - Sum
+                            - Average
+                    guardduty_findings:
+                      title: Failed Notifications
+                      description: The number of messages that Amazon SNS failed to deliver.
+                      type: object
+                      required:
+                        - threshold
+                        - period
+                        - statistic
+                      properties:
+                        threshold:
+                          type: integer
+                          title: Threshold
+                          description: "The current capacity of an Aurora Serverless DB cluster. (Unit: Count)"
+                          minimum: 1
+                          default: 1
+                        period:
+                          type: integer
+                          title: Period
+                          minimum: 1
+                          maximum: 86400
+                          default: 300
+                          description: The length of time associated with this statistic.
+                        statistic:
+                          type: string
+                          title: Statistic
+                          description: The calculation for triggering the alarm threshold.
+                          default: Sum
+                          enum:
+                            - Sum
+                            - Average
+
+
+connections:
+  required:
+  - aws_authentication
+  properties:
+    aws_authentication:
+      $ref: massdriver/aws-iam-role
+
+
+artifacts:
+  properties: {}
+
+
+ui:
+  ui:order:
+    - detector
+    - notifications
+    - features
+    - monitoring
+    - "*"
+  detector:
+    region:
+      ui:field: supportedCloudLocationsDropdown
+      cloudService: aws
+  notifications:
+    severity:
+      ui:order:
+        - low
+        - medium
+        - high
+        - "*"
+    ui:order:
+      - frequency
+      - email
+      - severity
+      - "*"
+  features:
+    ui:order:
+      - s3_data
+      - eks_audit
+      - ebs_malware
+      - rds_login
+      - eks_runtime
+      - lambda_network
+      - "*"
