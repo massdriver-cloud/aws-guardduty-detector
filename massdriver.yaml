@@ -2,7 +2,7 @@ schema: draft-07
 name: "aws-guardduty-detector"
 description: "Deploys an Amazon GuardDuty Detector to an AWS region as a threat detection service that continuously monitors your AWS accounts and workloads for malicious activity and sends emails about security findings for visibility and remediation."
 source_url: github.com/massdriver-cloud/aws-guardduty-detector
-access: private
+access: public
 type: "infrastructure"
 
 
