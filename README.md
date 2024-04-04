@@ -50,9 +50,40 @@ Form input parameters for configuring a bundle for deployment.
 <summary>View</summary>
 
 <!-- PARAMS:START -->
+## Properties
 
-**Params coming soon**
+- **`detector`** *(object)*
+  - **`region`** *(string)*: AWS Region to provision in.
 
+    Examples:
+    ```json
+    "us-west-2"
+    ```
+
+- **`features`** *(object)*: GuardDuty monitors [foundational features](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_data-sources.html) by default. Select any additional features you would like GuardDuty to monitor.
+  - **`ebs_malware`** *(boolean)*: Enable scanning of [EBS volumes for malware](https://docs.aws.amazon.com/guardduty/latest/ug/features-malware-protection.html). Default: `False`.
+  - **`eks_audit`** *(boolean)*: Enable monitoring of [EKS audit logs](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty-eks-audit-log-monitoring.html) to detect suspicious activity in your EKS clusters. Default: `False`.
+  - **`eks_runtime`** *(boolean)*: Enable monitoring of [EKS runtimes](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty-eks-runtime-monitoring.html) to detect suspicious activity in EKS workloads. Default: `False`.
+  - **`lambda_network`** *(boolean)*: Enable monitoring of [AWS lambda invocations](https://docs.aws.amazon.com/guardduty/latest/ug/feature-in-gdu-lambda-protection.html). Default: `False`.
+  - **`rds_login`** *(boolean)*: Enable monitoring [successful and unsuccessful login attempts to RDS databases](https://docs.aws.amazon.com/guardduty/latest/ug/features-rds-protection.html). Default: `False`.
+  - **`s3_data`** *(boolean)*: Enable monitoring of [S3 get/put/list/delete events](https://docs.aws.amazon.com/guardduty/latest/ug/features-s3-protection.html). Default: `False`.
+- **`monitoring`** *(object)*
+  - **`mode`** *(string)*: Enable and customize CloudWatch metric alarms. Default: `AUTOMATED`.
+    - **One of**
+      - Automated
+      - Custom
+      - Disabled
+- **`notifications`** *(object)*
+  - **`email`** *(string)*: Specify email to be notified at in case of findings.
+  - **`frequency`** *(string)*: Select the frequency to export events to EventHub for notifications. Default: `SIX_HOURS`.
+    - **One of**
+      - 15 Minutes
+      - 1 Hour
+      - 6 Hours
+  - **`severity`** *(object)*: Select the [severity levels](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_findings.html#guardduty_findings-severity) of GuardDuty findings to be notified about.
+    - **`high`** *(boolean)*: A High severity level indicates that the resource in question is compromised and is actively being used for unauthorized purposes. Default: `True`.
+    - **`low`** *(boolean)*: A low severity level indicates attempted suspicious activity that did not compromise your network. Default: `False`.
+    - **`medium`** *(boolean)*: A Medium severity level indicates suspicious activity that deviates from normally observed behavior and, depending on your use case, may be indicative of a resource compromise. Default: `True`.
 <!-- PARAMS:END -->
 
 </details>
@@ -65,8 +96,30 @@ Connections from other bundles that this bundle depends on.
 <summary>View</summary>
 
 <!-- CONNECTIONS:START -->
+## Properties
 
-**Connections coming soon**
+- **`aws_authentication`** *(object)*: . Cannot contain additional properties.
+  - **`data`** *(object)*
+    - **`arn`** *(string)*: Amazon Resource Name.
+
+      Examples:
+      ```json
+      "arn:aws:rds::ACCOUNT_NUMBER:db/prod"
+      ```
+
+      ```json
+      "arn:aws:ec2::ACCOUNT_NUMBER:vpc/vpc-foo"
+      ```
+
+    - **`external_id`** *(string)*: An external ID is a piece of data that can be passed to the AssumeRole API of the Security Token Service (STS). You can then use the external ID in the condition element in a role's trust policy, allowing the role to be assumed only when a certain value is present in the external ID.
+  - **`specs`** *(object)*
+    - **`aws`** *(object)*: .
+      - **`region`** *(string)*: AWS Region to provision in.
+
+        Examples:
+        ```json
+        "us-west-2"
+        ```
 
 <!-- CONNECTIONS:END -->
 
@@ -80,8 +133,7 @@ Resources created by this bundle that can be connected to other bundles.
 <summary>View</summary>
 
 <!-- ARTIFACTS:START -->
-
-**Artifacts coming soon**
+## Properties
 
 <!-- ARTIFACTS:END -->
 
