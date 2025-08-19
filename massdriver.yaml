@@ -3,7 +3,6 @@ name: aws-guardduty-detector
 version: 1.0.0
 description: Deploys an Amazon GuardDuty Detector to an AWS region as a threat detection service that continuously monitors your AWS accounts and workloads for malicious activity and sends emails about security findings for visibility and remediation.
 source_url: https://github.com/massdriver-cloud/aws-guardduty-detector
-type: application
 params:
   required:
   - detector
