@@ -1,18 +1,15 @@
 schema: draft-07
-name: "aws-guardduty-detector"
-description: "Deploys an Amazon GuardDuty Detector to an AWS region as a threat detection service that continuously monitors your AWS accounts and workloads for malicious activity and sends emails about security findings for visibility and remediation."
-source_url: github.com/massdriver-cloud/aws-guardduty-detector
-access: public
-type: "infrastructure"
-
-
+name: aws-guardduty-detector
+version: 1.0.0
+description: Deploys an Amazon GuardDuty Detector to an AWS region as a threat detection service that continuously monitors your AWS accounts and workloads for malicious activity and sends emails about security findings for visibility and remediation.
+source_url: https://github.com/massdriver-cloud/aws-guardduty-detector
 params:
   required:
-    - detector
-    - notifications
-    - features
-    - monitoring
-  properties:    
+  - detector
+  - notifications
+  - features
+  - monitoring
+  properties:
     detector:
       type: object
       title: Detector
@@ -20,15 +17,15 @@ params:
       - region
       properties:
         region:
-          $ref: https://raw.githubusercontent.com/massdriver-cloud/artifact-definitions/main/definitions/types/aws-region.json
-          $md.immutable: true
+          "$ref": https://raw.githubusercontent.com/massdriver-cloud/artifact-definitions/main/definitions/types/aws-region.json
+          "$md.immutable": true
     notifications:
       type: object
       title: Notifications
       required:
-        - frequency
-        - email
-        - severity
+      - frequency
+      - email
+      - severity
       properties:
         frequency:
           title: Frequency
@@ -36,12 +33,12 @@ params:
           type: string
           default: SIX_HOURS
           oneOf:
-            - title: 15 Minutes
-              const: FIFTEEN_MINUTES
-            - title: 1 Hour
-              const: ONE_HOUR
-            - title: 6 Hours
-              const: SIX_HOURS
+          - title: 15 Minutes
+            const: FIFTEEN_MINUTES
+          - title: 1 Hour
+            const: ONE_HOUR
+          - title: 6 Hours
+            const: SIX_HOURS
         email:
           title: Email
           description: Specify email to be notified at in case of findings
@@ -123,112 +120,106 @@ params:
           type: string
           default: AUTOMATED
           oneOf:
-            - const: AUTOMATED
-              title: Automated
-            - const: CUSTOM
-              title: Custom
-            - const: DISABLED
-              title: Disabled
+          - const: AUTOMATED
+            title: Automated
+          - const: CUSTOM
+            title: Custom
+          - const: DISABLED
+            title: Disabled
       dependencies:
         mode:
           oneOf:
-            - properties:
-                mode:
-                  const: AUTOMATED
-            - properties:
-                mode:
-                  const: DISABLED
-            - properties:
-                mode:
-                  const: CUSTOM
-                alarms:
-                  type: object
-                  title: Alarms
-                  required:
-                    - failed_notifications
-                    - guardduty_findings
-                  properties:
-                    failed_notifications:
-                      title: Failed Notifications
-                      description: The number of messages that Amazon SNS failed to deliver.
-                      type: object
-                      required:
-                        - threshold
-                        - period
-                        - statistic
-                      properties:
-                        threshold:
-                          type: integer
-                          title: Threshold
-                          description: "The current capacity of an Aurora Serverless DB cluster. (Unit: Count)"
-                          minimum: 1
-                          default: 1
-                        period:
-                          type: integer
-                          title: Period
-                          minimum: 1
-                          maximum: 86400
-                          default: 300
-                          description: The length of time associated with this statistic.
-                        statistic:
-                          type: string
-                          title: Statistic
-                          description: The calculation for triggering the alarm threshold.
-                          default: Sum
-                          enum:
-                            - Sum
-                            - Average
-                    guardduty_findings:
-                      title: Failed Notifications
-                      description: The number of messages that Amazon SNS failed to deliver.
-                      type: object
-                      required:
-                        - threshold
-                        - period
-                        - statistic
-                      properties:
-                        threshold:
-                          type: integer
-                          title: Threshold
-                          description: "The current capacity of an Aurora Serverless DB cluster. (Unit: Count)"
-                          minimum: 1
-                          default: 1
-                        period:
-                          type: integer
-                          title: Period
-                          minimum: 1
-                          maximum: 86400
-                          default: 300
-                          description: The length of time associated with this statistic.
-                        statistic:
-                          type: string
-                          title: Statistic
-                          description: The calculation for triggering the alarm threshold.
-                          default: Sum
-                          enum:
-                            - Sum
-                            - Average
-
-
+          - properties:
+              mode:
+                const: AUTOMATED
+          - properties:
+              mode:
+                const: DISABLED
+          - properties:
+              mode:
+                const: CUSTOM
+              alarms:
+                type: object
+                title: Alarms
+                required:
+                - failed_notifications
+                - guardduty_findings
+                properties:
+                  failed_notifications:
+                    title: Failed Notifications
+                    description: The number of messages that Amazon SNS failed to deliver.
+                    type: object
+                    required:
+                    - threshold
+                    - period
+                    - statistic
+                    properties:
+                      threshold:
+                        type: integer
+                        title: Threshold
+                        description: 'The current capacity of an Aurora Serverless DB cluster. (Unit: Count)'
+                        minimum: 1
+                        default: 1
+                      period:
+                        type: integer
+                        title: Period
+                        minimum: 1
+                        maximum: 86400
+                        default: 300
+                        description: The length of time associated with this statistic.
+                      statistic:
+                        type: string
+                        title: Statistic
+                        description: The calculation for triggering the alarm threshold.
+                        default: Sum
+                        enum:
+                        - Sum
+                        - Average
+                  guardduty_findings:
+                    title: Failed Notifications
+                    description: The number of messages that Amazon SNS failed to deliver.
+                    type: object
+                    required:
+                    - threshold
+                    - period
+                    - statistic
+                    properties:
+                      threshold:
+                        type: integer
+                        title: Threshold
+                        description: 'The current capacity of an Aurora Serverless DB cluster. (Unit: Count)'
+                        minimum: 1
+                        default: 1
+                      period:
+                        type: integer
+                        title: Period
+                        minimum: 1
+                        maximum: 86400
+                        default: 300
+                        description: The length of time associated with this statistic.
+                      statistic:
+                        type: string
+                        title: Statistic
+                        description: The calculation for triggering the alarm threshold.
+                        default: Sum
+                        enum:
+                        - Sum
+                        - Average
 connections:
   required:
   - aws_authentication
   properties:
     aws_authentication:
-      $ref: massdriver/aws-iam-role
-
-
+      "$ref": massdriver/aws-iam-role
 artifacts:
   properties: {}
-
-
 ui:
   ui:order:
-    - detector
-    - notifications
-    - features
-    - monitoring
-    - "*"
+  - detector
+  - notifications
+  - features
+  - monitoring
+  - "*"
   detector:
     region:
       ui:field: supportedCloudLocationsDropdown
@@ -236,21 +227,27 @@ ui:
   notifications:
     severity:
       ui:order:
-        - low
-        - medium
-        - high
-        - "*"
-    ui:order:
-      - frequency
-      - email
-      - severity
+      - low
+      - medium
+      - high
       - "*"
+    ui:order:
+    - frequency
+    - email
+    - severity
+    - "*"
   features:
     ui:order:
-      - s3_data
-      - eks_audit
-      - ebs_malware
-      - rds_login
-      - eks_runtime
-      - lambda_network
-      - "*"
+    - s3_data
+    - eks_audit
+    - ebs_malware
+    - rds_login
+    - eks_runtime
+    - lambda_network
+    - "*"
+steps:
+- path: src
+  provisioner: opentofu
+  config:
+    checkov:
+      enable: true
