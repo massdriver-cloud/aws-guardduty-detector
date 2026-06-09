@@ -210,7 +210,7 @@ connections:
   - aws_authentication
   properties:
     aws_authentication:
-      "$ref": massdriver/aws-iam-role
+      "$ref": aws-iam-role
 artifacts:
   properties: {}
 ui:
